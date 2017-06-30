@@ -142,3 +142,19 @@ Git LFS clients send:
 ```
 
 A 200 response means that the object exists on the server.
+
+# Native transfer API
+
+The native transfer API consists of directly exposing the contents of the lfs/objects/ directory to the client for read access using the same transport and authentication method used to access the git repository. This is applicable to file, http, https and ssh (using sftp). This API is "accidentally" supported on many environments with no special setup. The native transfer protocol is used as a fallback when the basic or other lfs-specific protocol is not available.
+
+# Slightly less native transfer API
+For the git protocol the lfs server discovery mechanism may be used to find the equivalent https transport endpoint for performing native access. Server discovery may also be used for ssh if sftp is not supported (e.g. restricted git shell).
+
+# Local filesystem
+When the remote repository is accessed through the filesystem (file: url, absolute or relatice path) the client searches for an lfs object in the following places:
+* The lfs/objects/ directory of the local repository
+* The lfs/objects/ directory of the remote repository
+* The origin of the remote repository (using any lfs remote protocol)
+
+# Push over trivial transfer
+The file: protocol should fully support pushing of lfs objects. When the remote repository in on the same filesystem device hard links may be used. Other protocols that may support native pushing are ssh/sftp and https/webdav, in descending order priority.
